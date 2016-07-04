@@ -1,0 +1,45 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'dist/css/pages/project-edit/index.css' %}" />
+<link href='//fonts.googleapis.com/css?family=Lato:300,500,800' rel='stylesheet' type='text/css'>
+{% endblock %}
+
+{% block title %}Post Project Updates | {% endblock %}
+
+{% block body %}
+
+<div class='row header-container'>
+    <div class='medium-4 columns'>
+        <div class="blue-bar"></div>
+    </div>
+    <div class='medium-4 columns'>
+        <h1 class="header">Post Project Update</h1>
+    </div>
+    <div class='medium-4 columns'>
+        <div class="blue-bar"></div>
+    </div>
+</div>
+<div class="row form-section">
+    <div class="large-12 columns">
+        <form id="project_update_form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
+            {% for error in form.non_field_errors %}
+            <div data-alert class="alert-box alert">
+                {{ error }}
+                <a href="#" class="close">&times;</a>
+            </div>
+            {% endfor %}
+            <div class="row">
+                <div class="medium-12 columns">
+                    {% include "base/partials/tooltip_formfield.html" with field=form.update_text %}
+                </div>
+            </div>
+            <button class="large right save-button" id="save_project" type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

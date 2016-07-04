@@ -1,0 +1,87 @@
+{% load sekizai_tags %}
+{% load mediaurl %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% load staticfiles %}
+
+    <title>{% block title %}{% endblock %}RE-volv</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="{% if project.cover_photo %}{{ project.cover_photo.url |fullmediaurl }}{% else %}{{ settings.revolv_cms.ShareThisSettings.image|fullmediaurl }}{% endif %}" />
+    <meta property="og:description" content="{% if project.description %} {{ project.description }}
+                                            {% else %} {{ settings.revolv_cms.ShareThisSettings.description }}{% endif %}" />
+    <link rel="icon" type="image/png" href="{% static 'images/revolv-logo.png' %}" />
+    {% block meta %}
+    {% endblock %}
+
+    <!-- Bootstrap -->
+    <link href="{% static 'lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/bootstrap/css/bootstrap-theme.min.css' %}" rel="stylesheet">
+
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900,600' rel='stylesheet' type='text/css'>
+
+    <!-- Main CSS -->
+    <link href="{% static 'css/jqtransform.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/animate.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/screen.css' %}" rel="stylesheet" />
+
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+
+    <!-- jQuery library -->
+    <script src="{% static 'js/jquery-2.1.4.min.js' %}"></script>
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/jquery.knob.js' %}"></script>
+    <script src="{% static 'js/parallax.min.js' %}"></script>
+    <script src="{% static 'js/hammer.min.js' %}"></script>
+    <script src="{% static 'js/jquery.hammer.js' %}"></script>
+    <script src="{% static 'js/jquery.jqtransform.js' %}"></script>
+    <script src="{% static 'lib/bootstrap/js/bootstrap.min.js' %}"></script>
+
+    <!-- Main JS -->
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <script type="text/javascript" src="https://ws.sharethis.com/button/buttons.js"></script>
+    <script type="text/javascript" src="https://ss.sharethis.com/loader.js"></script>
+
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body {% block body_class %}{% endblock%}>
+    {% block nav %}
+    {% include "base/partials/nav.html" %}
+    {% endblock %}
+
+    {% block body %}
+    {% endblock %}
+
+    {% block body-bottom %}
+    {% endblock %}
+
+    {% include "base/partials/foot.html" %}
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.2/js/toastr.min.js"></script>
+
+    {% if messages %}
+        <script>
+            toastr.options.positionClass = "toast-bottom-right";
+        </script>
+        {% for message in messages %}
+        <script>
+            toastr.{{ message.tags }}('{{ message }}')
+        </script>
+        {% endfor %}
+    {% endif %}
+
+    {% render_block "js" %}
+    {% block javascripts %}
+    {% endblock %}
+<script>
+var options={ "publisher": "{% sharethis_pub_id  %} ", "position": "left", "ad": { "visible": false, "openDelay": 5, "closeDelay": 0}, "chicklets": { "items": ["", "sharethis"]}};
+var st_hover_widget = new sharethis.widgets.hoverbuttons(options);
+</script>
+</body>
+
+</html>

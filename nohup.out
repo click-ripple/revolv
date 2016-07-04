@@ -1,0 +1,132 @@
+/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:07,683 py.warnings          WARNING  /home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:07,685 django_facebook.models WARNING  Warning FACEBOOK_APP_ID isnt specified
+2016-07-01 00:23:07,685 django_facebook.models WARNING  Warning FACEBOOK_APP_SECRET isnt specified
+2016-07-01 00:23:07,685 django_facebook.models WARNING  Required auth backend django_facebook.auth_backends.FacebookBackend wasnt found
+/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:08,190 py.warnings          WARNING  /home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:08,192 django_facebook.models WARNING  Warning FACEBOOK_APP_ID isnt specified
+2016-07-01 00:23:08,192 django_facebook.models WARNING  Warning FACEBOOK_APP_SECRET isnt specified
+2016-07-01 00:23:08,192 django_facebook.models WARNING  Required auth backend django_facebook.auth_backends.FacebookBackend wasnt found
+/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:13,795 py.warnings          WARNING  /home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:13,797 django_facebook.models WARNING  Warning FACEBOOK_APP_ID isnt specified
+2016-07-01 00:23:13,797 django_facebook.models WARNING  Warning FACEBOOK_APP_SECRET isnt specified
+2016-07-01 00:23:13,797 django_facebook.models WARNING  Required auth backend django_facebook.auth_backends.FacebookBackend wasnt found
+/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:14,316 py.warnings          WARNING  /home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django_facebook/utils.py:316: RemovedInDjango18Warning: commit_on_success is deprecated in favor of atomic.
+  @transaction.commit_on_success
+
+2016-07-01 00:23:14,318 django_facebook.models WARNING  Warning FACEBOOK_APP_ID isnt specified
+2016-07-01 00:23:14,318 django_facebook.models WARNING  Warning FACEBOOK_APP_SECRET isnt specified
+2016-07-01 00:23:14,318 django_facebook.models WARNING  Required auth backend django_facebook.auth_backends.FacebookBackend wasnt found
+Error: That port is already in use.
+[01/Jul/2016 00:24:22] "GET / HTTP/1.1" 200 33774
+[01/Jul/2016 00:24:22] "GET /static/js/mediaelement-and-player.min.js HTTP/1.1" 200 81111
+[01/Jul/2016 00:24:22] "GET /static/css/mediaelementplayer.min.css HTTP/1.1" 200 20163
+[01/Jul/2016 00:24:22] "GET /static/css/screen.css HTTP/1.1" 304 0
+[01/Jul/2016 00:24:22] "GET /static/dist/css/pages/home/index.css HTTP/1.1" 200 0
+[01/Jul/2016 00:24:22] "GET /static/images/top-section-video.jpg HTTP/1.1" 200 82412
+[01/Jul/2016 00:24:22] "GET /static/images/testimonials/enio_ximenes.png HTTP/1.1" 200 26226
+[01/Jul/2016 00:24:22] "GET /static/images/testimonials/darryl_dea.png HTTP/1.1" 200 21693
+[01/Jul/2016 00:24:22] "GET /static/images/testimonials/jennifer_martin.png HTTP/1.1" 200 15346
+[01/Jul/2016 00:24:22] "GET /static/images/testimonials/rebecca_johnson.png HTTP/1.1" 200 117599
+[01/Jul/2016 00:24:22] "GET /static/images/testimonials/ralph_silber.png HTTP/1.1" 200 29826
+[01/Jul/2016 00:24:22] "GET /static/images/testimonials/nathan_chan.png HTTP/1.1" 200 41451
+[01/Jul/2016 00:24:22] "GET /static/images/small/small-newsletter-bg.jpg HTTP/1.1" 200 133479
+[01/Jul/2016 00:24:22] "GET /static/images/logo-clean-technica.png HTTP/1.1" 200 13566
+[01/Jul/2016 00:24:22] "GET /static/images/logo-shareable.png HTTP/1.1" 200 11694
+[01/Jul/2016 00:24:22] "GET /static/images/logo-philanthropy.png HTTP/1.1" 200 11922
+[01/Jul/2016 00:24:22] "GET /static/images/logo-fast-mpany.png HTTP/1.1" 200 12698
+[01/Jul/2016 00:24:22] "GET /static/images/logo-ehe-new-hork-eimes.png HTTP/1.1" 200 26458
+[01/Jul/2016 00:24:22] "GET /static/images/solar-panels.jpg HTTP/1.1" 200 218953
+[01/Jul/2016 00:24:23] "GET /static/images/mobile/mobile-newsletter-bg.jpg HTTP/1.1" 200 96036
+[01/Jul/2016 00:24:23] "GET /static/images/newsletter-bg.jpg HTTP/1.1" 200 169858
+[01/Jul/2016 00:24:52] "GET / HTTP/1.1" 200 33774
+[01/Jul/2016 00:24:54] "GET /static/lib/bootstrap/css/bootstrap.min.css HTTP/1.1" 200 122540
+[01/Jul/2016 00:24:54] "GET /static/css/jqtransform.css HTTP/1.1" 200 4876
+[01/Jul/2016 00:24:54] "GET /static/lib/bootstrap/css/bootstrap-theme.min.css HTTP/1.1" 200 23357
+[01/Jul/2016 00:24:54] "GET /static/css/animate.css HTTP/1.1" 200 70824
+[01/Jul/2016 00:24:54] "GET /static/css/screen.css HTTP/1.1" 200 280445
+[01/Jul/2016 00:24:55] "GET /static/js/jquery-2.1.4.min.js HTTP/1.1" 200 84345
+[01/Jul/2016 00:24:56] "GET /static/js/jquery.waypoints.min.js HTTP/1.1" 200 8833
+[01/Jul/2016 00:24:59] "GET /static/js/jquery.hammer.js HTTP/1.1" 200 988
+[01/Jul/2016 00:24:59] "GET /static/js/hammer.min.js HTTP/1.1" 200 18323
+[01/Jul/2016 00:24:59] "GET /static/dist/css/pages/home/index.css HTTP/1.1" 200 0
+[01/Jul/2016 00:25:00] "GET /static/js/jquery.knob.js HTTP/1.1" 200 20743
+[01/Jul/2016 00:25:00] "GET /static/css/mediaelementplayer.min.css HTTP/1.1" 200 20163
+[01/Jul/2016 00:25:00] "GET /static/js/jquery.jqtransform.js HTTP/1.1" 200 14703
+[01/Jul/2016 00:25:00] "GET /static/js/script.js HTTP/1.1" 200 14604
+[01/Jul/2016 00:25:00] "GET /static/js/parallax.min.js HTTP/1.1" 200 6073
+[01/Jul/2016 00:25:01] "GET /static/lib/bootstrap/js/bootstrap.min.js HTTP/1.1" 200 36816
+[01/Jul/2016 00:25:01] "GET /static/js/mediaelement-and-player.min.js HTTP/1.1" 200 81111
+[01/Jul/2016 00:25:01] "GET /static/images/revolv-logo.png HTTP/1.1" 200 51724
+[01/Jul/2016 00:25:03] "GET /static/images/testimonials/enio_ximenes.png HTTP/1.1" 200 26226
+[01/Jul/2016 00:25:03] "GET /static/images/small/small-newsletter-bg.jpg HTTP/1.1" 200 133479
+[01/Jul/2016 00:25:03] "GET /static/images/testimonials/darryl_dea.png HTTP/1.1" 200 21693
+[01/Jul/2016 00:25:03] "GET /static/images/testimonials/nathan_chan.png HTTP/1.1" 200 41451
+[01/Jul/2016 00:25:03] "GET /static/images/mobile/mobile-newsletter-bg.jpg HTTP/1.1" 200 96036
+[01/Jul/2016 00:25:03] "GET /static/images/testimonials/jennifer_martin.png HTTP/1.1" 200 15346
+[01/Jul/2016 00:25:03] "GET /static/images/top-section-video.jpg HTTP/1.1" 200 82412
+[01/Jul/2016 00:25:05] "GET /static/images/newsletter-bg.jpg HTTP/1.1" 200 169858
+[01/Jul/2016 00:25:06] "GET /static/images/testimonials/rebecca_johnson.png HTTP/1.1" 200 117599
+[01/Jul/2016 00:25:06] "GET /static/images/testimonials/ralph_silber.png HTTP/1.1" 200 29826
+[01/Jul/2016 00:25:06] "GET /static/images/logo-fast-mpany.png HTTP/1.1" 200 12698
+[01/Jul/2016 00:25:06] "GET /static/images/logo-white.png HTTP/1.1" 200 4134
+[01/Jul/2016 00:25:07] "GET /static/images/logo-clean-technica.png HTTP/1.1" 200 13566
+[01/Jul/2016 00:25:07] "GET /static/images/icon-sprites.png HTTP/1.1" 200 32260
+[01/Jul/2016 00:25:07] "GET /static/images/logo-philanthropy.png HTTP/1.1" 200 11922
+[01/Jul/2016 00:25:08] "GET /static/images/logo-ehe-new-hork-eimes.png HTTP/1.1" 200 26458
+[01/Jul/2016 00:25:08] "GET /static/images/logo-shareable.png HTTP/1.1" 200 11694
+[01/Jul/2016 00:25:08] "GET /static/images/solar-panels.jpg HTTP/1.1" 200 218953
+[01/Jul/2016 00:25:24] "GET / HTTP/1.1" 200 33774
+[01/Jul/2016 00:25:39] "GET / HTTP/1.1" 200 33774
+[01/Jul/2016 00:27:25] "GET / HTTP/1.1" 200 33774
+[01/Jul/2016 01:33:17] "GET /robots.txt HTTP/1.1" 404 5790
+[01/Jul/2016 04:46:35] "GET / HTTP/1.1" 200 33774
+[01/Jul/2016 04:46:37] "GET /static/css/screen.css HTTP/1.1" 304 0
+Performing system checks...
+
+System check identified no issues (0 silenced).
+July 01, 2016 - 00:23:08
+Django version 1.7.1, using settings 'revolv.settings.local'
+Starting development server at http://127.0.0.1:1234/
+Quit the server with CONTROL-C.
+Traceback (most recent call last):
+  File "manage.py", line 14, in <module>
+    execute_from_command_line(sys.argv)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/core/management/__init__.py", line 385, in execute_from_command_line
+    utility.execute()
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/core/management/__init__.py", line 377, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/core/management/base.py", line 288, in run_from_argv
+    self.execute(*args, **options.__dict__)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/core/management/base.py", line 338, in execute
+    output = self.handle(*args, **options)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/core/management/commands/runserver.py", line 83, in handle
+    self.run(*args, **options)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/core/management/commands/runserver.py", line 92, in run
+    autoreload.main(self.inner_run, args, options)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/utils/autoreload.py", line 322, in main
+    reloader(wrapped_main_func, args, kwargs)
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/utils/autoreload.py", line 288, in python_reloader
+    reloader_thread()
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/utils/autoreload.py", line 264, in reloader_thread
+    change = fn()
+  File "/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/utils/autoreload.py", line 202, in code_changed
+    stat = os.stat(filename)
+OSError: [Errno 2] No such file or directory: '/home/ip-d/Documents/parul/projects/re_volv/revolv/local/lib/python2.7/site-packages/django/conf/locale/ga/LC_MESSAGES/django.mo'

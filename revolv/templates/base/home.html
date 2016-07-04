@@ -1,0 +1,456 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load humanize %}
+
+{% block title %}Home | {% endblock %}
+
+{% block head %}
+    <script type="text/javascript">
+        window.PARTIAL_COMPLETENESS = {{ first_project.partial_completeness_as_js }};
+        var js_urls = {
+            'newsletter-bg.jpg': '{% static "images/newsletter-bg.jpg" %}',
+            'small-newsletter-bg.jpg': '{% static "images/small/small-newsletter-bg.jpg" %}'
+        };
+    </script>
+    <script src="{% static 'js/mediaelement-and-player.min.js' %}"></script>
+    <link href="{% static 'css/mediaelementplayer.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'dist/css/pages/home/index.css' %}" rel="stylesheet" />
+{% endblock %}
+
+{% block body_class %}class="home-page-content"{% endblock %}
+
+{% block nav %}
+<header class="header top-section-header">
+  <div class="container">
+    <div class="lefts pull-left">
+      <a href="/" class="logo"></a>
+    </div>
+    <!-- end .logo -->
+    <div class="rights pull-right">
+      <div class="txt pull-left">
+
+        {% if request.user.is_authenticated %}
+          <li class="user-controls has-dropdown">
+            <a href="{% url 'dashboard' %}" class="btn-blue pull-left btn-donate">MY PORTFOLIO</a>
+            <a href="{% url 'logout' %}" class="btn-blue pull-left btn-donate">SIGN OUT</a>
+          </li>
+          {% else %}
+            <a href="{% url 'signin' %}#signup" class="component-link btn-blue pull-left btn-donate" data-component="signup">SIGN UP</a>
+            <a href="{% url 'signin' %}#login" class="component-link btn-blue pull-left btn-donate" data-component="login">SIGN IN</a>
+        {% endif %}
+
+      </div>
+      <a href="{% url 'projects_list' %}" class="btn-blue btn-donate pull-left after-scroll">DONATE NOW</a>
+    </div>
+  </div>
+</header>
+{% endblock %}
+
+{% block body %}
+
+<div class="top-section nav-margins">
+  <div class="section-video">
+    <div class="section-video-area">
+      <div class="video-opacity"></div>
+      <img src="{% static 'images/top-section-video.jpg' %}" class="hide" alt="Video">
+      <video id="video-player" autoplay loop preload="none">
+        <source type="video/youtube" src="https://www.youtube.com/embed/th_u9EdzCYw" />
+      </video>
+    </div>
+  </div>
+  <!-- end .section-video -->
+  <div class="section-video-overlay">
+    <div class="titles">
+      {{ settings.revolv_cms.MainPageSettings.site_tagline|safe }}
+    </div>
+    <p>
+      {{ settings.revolv_cms.MainPageSettings.site_subheading|safe }}
+    </p>
+    <a href="{% url 'projects_list' %}" class="btn-blue btn-donate-now">{{ settings.revolv_cms.MainPageSettings.learn_button_text }}</a>
+  </div>
+</div>
+<!-- end .top-section -->
+
+<div class="active-projects-module animated">
+  <div class="container">
+    <div class="title-blue-border title-active-projects">ACTIVE PROJECTS</div>
+    <div class="row">
+
+      {% for active_project in featured_projects %}
+      <div class="col-md-4">
+        <div class="module-box">
+          <div class="img-main">
+            <a href="{% url "project:view" pk=active_project.pk %}" class="img-link">
+              <span class="txt-table">
+                <span class="txt">
+                    {{ active_project.title }}
+                </span>
+              </span>
+              <div class="img" style="background-image:url({% static 'images/solar-panels.jpg' %})"></div>
+            </a>
+            <div class="funded-round">
+              <div class="status-circular">
+                <span class="status-text">
+                  <span class="round-depict"><span>OF</span> ${{ active_project.funding_goal|floatformat:0|intcomma }}</span>
+                </span>
+                <!-- end .status-text -->
+                <div class="status-indicator desktop-circle">
+                  <input type="text" value="{{ active_project.percent_complete }}" data-min="0" data-width="105" data-height="105" data-bgcolor="#fff" data-fgcolor="#14b1e7" data-max="100" data-readonly="true" data-thickness=".24">
+                </div>
+                <div class="status-indicator small-circle">
+                  <input type="text" value="{{ active_project.percent_complete }}" data-min="0" data-width="92" data-height="92" data-bgcolor="#fff" data-fgcolor="#14b1e7" data-max="100" data-readonly="true" data-thickness=".2">
+                </div>
+                <div class="status-indicator tablet-circle">
+                  <input type="text" value="{{ active_project.percent_complete }}" data-min="0" data-width="200" data-height="200" data-bgcolor="#fff" data-fgcolor="#14b1e7" data-max="100" data-readonly="true" data-thickness=".12">
+                </div>
+                <div class="status-indicator mobile-circle">
+                  <input type="text" value="{{ active_project.percent_complete }}" data-min="0" data-width="98" data-height="98" data-bgcolor="#fff" data-fgcolor="#14b1e7" data-max="100" data-readonly="true" data-thickness=".12">
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end .img-main -->
+          <div class="info-main">
+            <div class="blue-bar">
+              <span class="pull-left">${{ active_project.amount_donated|floatformat:"0"|intcomma }}</span>
+              <span class="pull-right">{{ active_project.days_left }} Days Left</span>
+            </div>
+            <!-- end .blue-bar -->
+            <div class="dark-blue-bar">
+              <span class="pull-left actual-energy">{{ active_project.actual_energy }} lbs CO<sub>2</sub></span>
+              <span class="pull-right">{{ active_project.donors.count }} Donors</span>
+            </div>
+            <!-- end .blue-bar -->
+          </div>
+          <!-- end .info-main -->
+        </div>
+        <!-- end .module-box -->
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<!-- end .active-projects-module -->
+
+<div class="our-impacts-module animated">
+  <div class="container">
+    <div class="title-blue-border title-our-impacts">OUR IMPACTS</div>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="module-box">
+          <span class="icons icon-people"></span>
+          <span class="titles font72">{{ global_impacts.num_people_donated }}</span>
+          <p class="txt">people donated</p>
+        </div>
+        <!-- end .module-box -->
+      </div>
+      <div class="col-md-3">
+        <div class="module-box">
+          <span class="icons icon-home-ok"></span>
+          <span class="titles font72">{{ global_impacts.num_projects }}</span>
+          <p class="txt">
+			solar projects 
+			installed
+		  </p>
+        </div>
+        <!-- end .module-box -->
+      </div>
+      <div class="col-md-3">
+        <div class="module-box">
+          <span class="icons icon-tree"></span>
+          <span class="titles font48">{{ global_impacts.co2_avoided }}<span class="font20">lbs</span></span>
+          <p class="txt">CO<span class="position"><span class="font10">2</span></span> AVOIDED</p>
+        </div>
+        <!-- end .module-box -->
+      </div>
+      <div class="col-md-3">
+        <div class="module-box">
+          <span class="icons icon-user"></span>
+          <span class="titles font48">{{ global_impacts.num_people_affected }}</span>
+          <p class="txt">
+            COMMUNITY MEMBERS
+            IMPACTED
+          </p>
+        </div>
+        <!-- end .module-box -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end .our-impacts-module -->
+
+<div class="how-it-works-module animated">
+  <div class="container">
+    <div class="title-blue-border title-how-it-works">{{ settings.revolv_cms.MainPageSettings.how_it_works_heading|upper }}</div>
+    <div class="row info-row">
+      <div class="video-area pull-right">
+        <div class="video">
+          <iframe src="{{ settings.revolv_cms.MainPageSettings.how_it_works_video_url }}" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div class="txt-area">
+        <div class="txt-table">
+          <div class="txt-td">
+              <p>{{ settings.revolv_cms.MainPageSettings.how_it_works_intro }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end .info-row -->
+    <div class="row step-row">
+      <div id="step-carousel-example-generic" class="carousel slide" data-ride="carousel" data-interval="">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+          <li data-target="#step-carousel-example-generic" data-slide-to="0" class="active"></li>
+          <li data-target="#step-carousel-example-generic" data-slide-to="1"></li>
+          <li data-target="#step-carousel-example-generic" data-slide-to="2"></li>
+        </ol>
+
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <div class="item active">
+            <div class="module-box">
+              <div class="icon-blue-round icon-fundraise pull-left"><span class="icons"></span></div>
+              <div class="icons icon-arrow-right"></div>
+              <div class="info-txt">
+                <h4>FUNDRAISE</h4>
+                <p>
+                  RE-volv raises money
+                  through crowdfunding from
+                  amazing people like you.
+                </p>
+              </div>
+            </div>
+            <!-- end .module-box -->
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <div class="module-box">
+              <div class="icon-blue-round icon-invest pull-left"><span class="icons"></span></div>
+              <div class="icons icon-arrow-right"></div>
+              <div class="info-txt">
+                <h4>INVEST</h4>
+                <p>
+                  We then invest in
+                  community-based solar
+                  energy projects.
+                </p>
+              </div>
+            </div>
+            <!-- end .module-box -->
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <div class="module-box">
+              <div class="icon-blue-round icon-pay-it-forward pull-left"><span class="icons"></span></div>
+              <div class="info-txt">
+                <h4>PAY IT FORWARD</h4>
+                <p>
+                  Finally, we reinvest the
+                  money saved to fund more
+                  worthy solar energy projects.
+                </p>
+              </div>
+            </div>
+            <!-- end .module-box -->
+          </div>
+          <!-- end .item -->
+        </div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#step-carousel-example-generic" role="button" data-slide="prev">
+          <span class="icons icon-arrow-left" aria-hidden="true"></span>
+        </a>
+        <a class="right carousel-control" href="#step-carousel-example-generic" role="button" data-slide="next">
+          <span class="icons icon-arrow-right" aria-hidden="true"></span>
+        </a>
+      </div>
+      <!-- end .carousel -->
+    </div>
+    <!-- end .step-row -->
+  </div>
+</div>
+<!-- end .how-it-works-module -->
+
+<div class="testimonial-module animated">
+  <div class="container">
+    <div class="title-blue-border title-testimonial">TESTIMONIAL</div>
+    <div class="row head-row">
+      <ul>
+        {% with testimonial_image="images/testimonials/enio_ximenes.png" testimonial_image_mobile="images/testimonials/enio_ximenes.png" %}
+          {% include "base/partials/testimonial-head.html" %}
+        {% endwith %}
+        {% with testimonial_image="images/testimonials/darryl_dea.png" testimonial_image_mobile="images/testimonials/darryl_dea.png" %}
+          {% include "base/partials/testimonial-head.html" %}
+        {% endwith %}
+        {% with testimonial_image="images/testimonials/rebecca_johnson.png" testimonial_image_mobile="images/testimonials/rebecca_johnson.png" testimonial_active=True %}
+          {% include "base/partials/testimonial-head.html" %}
+        {% endwith %}
+        {% with testimonial_image="images/testimonials/jennifer_martin.png" testimonial_image_mobile="images/testimonials/jennifer_martin.png" %}
+          {% include "base/partials/testimonial-head.html" %}
+        {% endwith %}
+        {% with testimonial_image="images/testimonials/ralph_silber.png" testimonial_image_mobile="images/testimonials/ralph_silber.png" %}
+          {% include "base/partials/testimonial-head.html" %}
+        {% endwith %}
+		{% with testimonial_image="images/testimonials/nathan_chan.png" testimonial_image_mobile="images/testimonials/nathan_chan.png" %}
+          {% include "base/partials/testimonial-head.html" %}
+        {% endwith %}
+      </ul>
+    </div>
+    <!-- end .head-row -->
+    {% with testimonial_name="Enio Ximenes" testimonial_position="Donor" testimonial_text="I had the pleasure to see one of RE-volv’s projects right in my neighborhood, at a worker-owned grocery co-op called Other Avenues. I try to volunteer on the solar installs as much as I can and I grab every chance I can get to raise funds for RE-volv because I know that every dollar is well spent, and will be used over and over again to bring positive change and progress while helping other nonprofits that are doing important work." %}
+      {% include "base/partials/testimonial-info-area.html" %}
+    {% endwith %}
+
+    {% with testimonial_name="Darryl Dea" testimonial_position="President, Other Avenues Food Cooperative" testimonial_text="Over the years I’d been looking at different possibilities and then RE-volv came around, and it was like the perfect fit for us! Contributing to this revolving fund that’s going to, futher down the line, help out other co-ops and nonprofits, we’re excited about that. This is going to save us in the neighborhood of $300,000 over the course of 20 years!" %}
+      {% include "base/partials/testimonial-info-area.html" %}
+    {% endwith %}
+
+    {% with testimonial_name="Rebecca Johnson" testimonial_position="Executive Director, Shawl-Anderson Dance Center" testimonial_text="We’re really excited and honored to be the first project for RE-volv. We’d been looking to go solar for quite a few years, and when Andreas came to us and proposed this amazing plan, it was like a perfect fit. This is another reason for people to say ‘yes,’ to being here, and another reason to love being here." testimonial_active=True %}
+      {% include "base/partials/testimonial-info-area.html" %}
+    {% endwith %}
+
+    {% with testimonial_name="Jennifer Martin" testimonial_position="Chair, RE-volv Board of Directors; Executive Director, Center for Resource Solutions" testimonial_text="What’s really inspiring about RE-volv and what excites me about being involved in the organization is the real tangible feeling you get when you can actually see the results of the labor." %}
+      {% include "base/partials/testimonial-info-area.html" %}
+    {% endwith %}
+
+    {% with testimonial_name="Ralph Silber" testimonial_position="Greening Committee Chair, Kehilla Community Synagogue" testimonial_text="One of our basic values is about community and community building and the importance of that. And because of the crowdfunding model that RE-volv uses, it fit perfectly with our idea. Even if somebody would have handed us a check for the money we needed, that wouldn’t have been our first choice, because by doing the fundraising we were accomplishing one of our other goals which is informing more people about the availability of solar." %}
+      {% include "base/partials/testimonial-info-area.html" %}
+    {% endwith %}
+	
+	{% with testimonial_name="Nathan Chan" testimonial_position="Donor" testimonial_text="I support RE-volv because after meeting with the team, I could not imagine working with a more sincere, dedicated, and knowledgeable set of people, especially on the scale of the climate problem. They are also solving a very unique problem in the transition to clean energy, targeting the non-profits who do not benefit from current subsidies, while figuring out a way to empower those of us who want to do something, but are not sure how." %}
+      {% include "base/partials/testimonial-info-area.html" %}
+    {% endwith %}
+  </div>
+</div>
+<!-- end .testimonial-module -->
+
+<div class="featured-on-module animated">
+  <div class="container">
+    <div class="title-blue-border title-featured-on">FEATURED IN</div>
+    <div class="carousel-main">
+      <div id="featured-on-example-generic" class="carousel slide desktop-show" data-ride="carousel" data-interval="">
+        <!-- Indicators -->
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <div class="item active">
+            <ul class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-fast-mpany"></a></li>
+              <li><a href="javascript:;" class="logo logo-ehe-new-hork-eimes"></a></li>
+              <li><a href="javascript:;" class="logo logo-shareable"></a></li>
+              <li><a href="javascript:;" class="logo logo-philanthropy"></a></li>
+              <li><a href="javascript:;" class="logo logo-clean-technica"></a></li>
+            </ul>
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <ul class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-shareable"></a></li>
+              <li><a href="javascript:;" class="logo logo-philanthropy"></a></li>
+              <li><a href="javascript:;" class="logo logo-fast-mpany"></a></li>
+              <li><a href="javascript:;" class="logo logo-ehe-new-hork-eimes"></a></li>
+              <li><a href="javascript:;" class="logo logo-clean-technica"></a></li>
+            </ul>
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <div class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-forbes"></a></li>
+              <li><a href="javascript:;" class="logo logo-whitehouse"></a></li>
+              <li><a href="javascript:;" class="logo logo-doe"></a></li>
+            </div>
+          </div>
+          <!-- end .item -->
+        </div>
+        <!-- Controls -->
+        <a class="left carousel-control" href="#featured-on-example-generic" role="button" data-slide="prev">
+          <span class="icons icon-arrow-left" aria-hidden="true"></span>
+        </a>
+        <a class="right carousel-control" href="#featured-on-example-generic" role="button" data-slide="next">
+          <span class="icons icon-arrow-right" aria-hidden="true"></span>
+        </a>
+      </div>
+      <!-- end .carousel -->
+
+      <div id="mobile-featured-on-example-generic" class="carousel slide desktop-show" data-ride="carousel" data-interval="">
+        <!-- Indicators -->
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <div class="item active">
+            <ul class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-ehe-new-hork-eimes"></a></li>
+              <li><a href="javascript:;" class="logo logo-shareable"></a></li>
+              <li><a href="javascript:;" class="logo logo-philanthropy"></a></li>
+            </ul>
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <ul class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-fast-mpany"></a></li>
+              <li><a href="javascript:;" class="logo logo-clean-technica"></a></li>
+              <li><a href="javascript:;" class="logo logo-shareable"></a></li>
+            </ul>
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <ul class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-philanthropy"></a></li>
+              <li><a href="javascript:;" class="logo logo-fast-mpany"></a></li>
+              <li><a href="javascript:;" class="logo logo-ehe-new-hork-eimes"></a></li>
+            </ul>
+          </div>
+          <!-- end .item -->
+          <div class="item">
+            <div class="logo-ul">
+              <li><a href="javascript:;" class="logo logo-forbes"></a></li>
+              <li><a href="javascript:;" class="logo logo-whitehouse"></a></li>
+              <li><a href="javascript:;" class="logo logo-doe"></a></li>
+            </div>
+          </div>
+          <!-- end .item -->
+        </div>
+        <!-- Controls -->
+        <a class="left carousel-control" href="#mobile-featured-on-example-generic" role="button" data-slide="prev">
+          <span class="icons icon-arrow-left" aria-hidden="true"></span>
+        </a>
+        <a class="right carousel-control" href="#mobile-featured-on-example-generic" role="button" data-slide="next">
+          <span class="icons icon-arrow-right" aria-hidden="true"></span>
+        </a>
+      </div>
+      <!-- end .carousel -->
+
+
+    </div>
+    <!-- end .carousel-main -->
+  </div>
+</div>
+<!-- end .featured-on-module -->
+
+<div class="newsletter-module">
+  <div class="parallax-window" id="parallax-anchor"></div>
+  <div class="img-preload">
+    <img src="{% static 'images/small/small-newsletter-bg.jpg' %}" class="small-img" alt="">
+    <img src="{% static 'images/mobile/mobile-newsletter-bg.jpg' %}" class="mobile-img" alt="">
+  </div>
+  <div class="container animated">
+    <div class="title-white-border title-newsletter">NEWSLETTER SIGNUP</div>
+    <div class="group-main">
+      <p>Get all our updates</p>
+      <div class="group">
+        <form id="form1" name="form1" class="wufoo  page" autocomplete="off" enctype="multipart/form-data" novalidate>
+		  <a href="{% url 'signin' %}#signup" class="btn-blue btn-sign-up" type="submit">sign up</a>
+          <span class="inputs"><input id="Field0" name="Field0" type="email" spellcheck="false" value="" maxlength="255" tabindex="1" placeholder="youareawesome@example.com" required /></span>
+          <div style='height: 0px; overflow: hidden'><label for="comment">Do Not Fill This Out</label>
+            <textarea name="comment" id="comment" rows="1" cols="1" ></textarea>
+          </div>
+          <input type="hidden" id="idstamp" name="idstamp" value="9X+cjERjxi6m2dDjRLw2bzjqm4tI/nry48G0TQb8qtk=" />
+        </form>
+
+      </div>
+    </div>
+    <!-- end .group-main -->
+  </div>
+</div>
+<!-- end .newsletter-module -->
+
+{% endblock %}

@@ -1,0 +1,11 @@
+{% if project.daily_solor_data %}
+    {{ project.daily_solar_data.read }}
+{% endif %}
+<br/>
+{% if project.monthly_solar_data %}
+    {{ project.monthly_solar_data.read }}
+{% endif %}
+<br/>
+{% if project.annual_solar_data %}
+    {{ project.annual_solar_data.read }}
+{% endif %}

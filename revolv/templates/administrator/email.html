@@ -1,0 +1,16 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Newsletter Subscribers | {% endblock %}
+
+{% block body %}
+<div class="contents top150"> 
+  <div class="container"> 
+    <h1>Newsletter Subscribers</h1>
+    <div class="row">
+      <textarea rows="15">{% for email in subscribed_user_emails %}{{ email }}&#13;&#10;{% endfor %}</textarea>
+      <p><a class="download btn btn-blue" href="{% url "administrator:emailcsv" %}">Download as CSV</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

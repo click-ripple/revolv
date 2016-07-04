@@ -1,0 +1,91 @@
+@mixin text-with-divider($font-size, $divider-color: #bbb, $divider-width: 1px, $bg-color: white) {
+    display: block;
+    height: 0.5em;
+    line-height: 1em;
+    border: none;
+    border-bottom: $divider-width solid $divider-color;
+    margin-bottom: 0.5em;
+    text-align: center;
+    font-size: $font-size;
+    &:first-line {
+        background-color: $bg-color;
+    }
+    &:before {
+        display: inline;
+        content: "\a0\a0\a0";
+    }
+    &:after {
+        display: inline;
+        content: "\a0\a0\a0";
+    }
+}
+
+@mixin revolv-hover-button($color, $text-color) {
+    cursor: pointer;
+    background-color: transparent;
+    color: $text-color;
+    border: 1px solid $color;
+
+    &:hover {
+        background-color: $color;
+        color: white;
+        transition: background-color 0.2s;
+        transition: color 0.1s;
+        -webkit-transition: background-color 0.2s;
+        -webkit-transition: color 0.1s;
+    }
+
+    &:disabled {
+        opacity: 0.3;
+    }
+}
+
+@mixin revolv-form-field() {
+    position: absolute;
+    background-color: white;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid #bbb;
+    text-decoration: none;
+    font-size: 10px;
+}
+@mixin display-flex(){
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+@mixin justify-content($justify){
+      -webkit-justify-content: $justify;
+     -moz-justify-content: $justify;
+      -ms-justify-content: $justify;
+          justify-content: $justify;
+}
+@mixin flex-wrap($wrap){
+  -webkit-flex-wrap: $wrap;
+     -moz-flex-wrap: $wrap;
+      -ms-flex-wrap: $wrap;
+          flex-wrap: $wrap;
+}
+@mixin revolv-sliding-border($color, $width, $transition-time) {
+    // sliding border from http://bradsknutson.com/blog/css-sliding-underline/
+    display: inline-block;
+    position: relative;
+    padding-bottom: $width;
+
+    &:after {
+        content: '';
+        display: block;
+        margin: auto;
+        height: $width;
+        width: 0px;
+        background: transparent;
+        transition: width $transition-time ease, background-color $transition-time ease;
+    }
+
+    &.active:after {
+        width: 100%;
+        background: $revolv-blue;
+    }
+}

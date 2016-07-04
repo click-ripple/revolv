@@ -1,0 +1,161 @@
+{% comment %}
+    Dashboard Project
+
+    This is a partial for the view of a project on the the RE-volv dashboard (mockup can be seen at
+    https://cloud.githubusercontent.com/assets/7706852/6608266/b4c8fdd8-c802-11e4-9610-939a5f9f5dd9.png).
+    This partial accepts the following template variables:
+
+    :project: the project to render. Various things about the project will be renedered, including controls
+        to approve/edit/complete the project, based on the permissions of the user.
+    :user: the currently logged in user. This user is guaranteed to be logged in, since if they're
+        seeing this page then they have bypassed the functionality which redirects to the homepage for
+        unauthenticated users.
+
+    The project view includes (1) a top bar with the title of the project, its status, and control buttons, (2)
+    the cover photo of the project, and (3) a tabbed area with more into realted to the project in each tab,
+    including management functions if the user has the appropriate permissions.
+
+    TODO: currently, we load in the html for every single project in the RE-volv database on the admin dashboard
+    page (on the donor and ambassador pages, we technically may load in some or all of them). When RE-volv grows
+    beyond the order of 10-100 projects, this page may become very slow to load and/or a lot to work through
+    easily in the sidebar UI, so we may have to rethink this design a little bit.
+{% endcomment %}
+{% load humanize %}
+{% include "base/partials/dashboard_project_header.html" with user=user project=project %}
+<div class="row cover-photo"{% if project.cover_photo %} style="background-image: url({{project.cover_photo.url}});"{% endif %}></div>
+<div class="row project-tabs">
+    <dl class="tabs" data-tab>
+        <dd class="tab-title"><a href="#description-{{project.pk}}">Description</a></dd>
+        <dd class="tab-title{% if not project.is_completed %} active{% endif %}">
+            <a href="#funding-{{project.pk}}">Funding &amp; Statistics</a>
+        </dd>
+        {% if project.updates.count > 0 %}
+            <dd class="tab-title"><a href="#updates-{{project.pk}}">Updates</a></dd>
+        {% endif %}
+        {% if project.is_completed %}
+            <dd class="tab-title active"><a href="#repayment-{{project.pk}}">Repayment</a></dd>
+        {% endif %}
+    </dl>
+</div>
+<div class="project-tabs-content tabs-content">
+    <div class="content description" id="description-{{project.pk}}">
+        <div class="row project-tagline">
+            <h2 class="small-10 small-offset-1 columns">{{project.tagline}}</h2>
+        </div>
+        <div class="row project-description">
+            <div class="small-10 small-offset-1 columns">
+                <p>{{project.description|safe}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="content funding{% if not project.is_completed %} active{% endif %}" id="funding-{{project.pk}}">
+        <div class="row donation-stats">
+            <div class="small-12 medium-12 large-2 large-offset-1 columns" style="height:140px">
+                <div class="funding-progress-container">
+                    <div class="statistics-graphics-container">
+                        <svg class="dashboard-svg-graphics-container"></svg>
+                        <svg class="dashboard-internal-graphics-container"></svg>
+                        <div class="text-container">
+                            <p class="percentage-text">{{ project.percent_complete }}%</p>
+                            <p class="funded"><span>OF</span> ${{ project.funding_goal|floatformat:0|intcomma }}</p>
+                        </div>
+                        <div class="percentage-container hide">{{ project.partial_completeness_as_js }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="funding-stats-table small-12 medium-6 large-3 columns">
+                <div class="row funding-stats-table-row">
+                    <div class="description small-6 large-7 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.donor_stats_table_funding_goal_description}}</div>
+                    <div class="table-value small-6 large-5 columns">${{ project.funding_goal|floatformat:"2"|intcomma }}</div>
+                </div>
+                <div class="row funding-stats-table-row">
+                    <div class="description small-6 large-7 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.donor_stats_table_amount_donated_description}}</div>
+                    <div class="table-value small-6 large-5 columns">${{ project.amount_donated|floatformat:"0"|intcomma }}</div>
+                </div>
+                <div class="row funding-stats-table-row">
+                    <div class="description small-6 large-7 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.donor_stats_table_amount_remaining_description}}</div>
+                    <div class="table-value small-6 large-5 columns">${{ project.amount_left|floatformat:"2"|intcomma }}</div>
+                </div>
+            </div>
+            <div class="donor-stats-table small-12 medium-6 large-3 columns">
+                <div class="row donor-stats-table-row">
+                    <div class="description small-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.donor_stats_table_donors_description}}</div>
+                    <div class="table-value small-6 columns">{{ project.donors.count }}</div>
+                </div>
+                <div class="row donor-stats-table-row">
+                    <div class="description small-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.donor_stats_table_timeline_description}}</div>
+                    <div class="table-value small-6 columns">{{ project.total_days }} days</div>
+                </div>
+                <div class="row donor-stats-table-row">
+                    <div class="description small-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.donor_stats_table_days_so_far_description}}</div>
+                    <div class="table-value small-6 columns">{{ project.days_so_far }}</div>
+                </div>
+            </div>
+            <div class="days-remaining small-12 medium-12 large-2 columns end">
+                <div class="num-days-remaining">{{project.days_left}}</div>
+                <div class="days-remaining-label">day{{project.days_left|pluralize}} left</div>
+            </div>
+        </div>
+        <div class="row project-stats">
+            <div class="project-stats-table-container small-12 large-10 large-offset-1 columns">
+                <div class="row project-stats-table-row">
+                    <div class="small-8 medium-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.kilowatt_description }}</div>
+                    <div class="small-4 medium-6 columns">{{ project.statistics.kilowatts|floatformat:"2"|intcomma }} kW</div>
+                </div>
+                <div class="row project-stats-table-row highlight">
+                    <div class="small-8 medium-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.dollars_saved_description }}</div>
+                    <div class="small-4 medium-6 columns">${{ project.statistics.dollars_saved_per_month|floatformat:"2"|intcomma }}</div>
+                </div>
+                <div class="row project-stats-table-row">
+                    <div class="small-8 medium-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.carbon_saved_description }}</div>
+                    <div class="small-4 medium-6 columns">{{ project.statistics.pounds_carbon_saved_per_month|floatformat:"2"|intcomma }} lbs C02</div>
+                </div>
+                <div class="row project-stats-table-row highlight">
+                    <div class="small-8 medium-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.trees_description }}</div>
+                    <div class="small-4 medium-6 columns">{{ project.statistics.acres_of_trees_saved_per_year|floatformat:"2"|intcomma }} acres</div>
+                </div>
+                <div class="row project-stats-table-row">
+                    <div class="small-8 medium-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.automobile_miles_description }}</div>
+                    <div class="small-4 medium-6 columns">{{ project.statistics.automobile_miles_per_month|floatformat:"2"|intcomma }} miles/month</div>
+                </div>
+                <div class="row project-stats-table-row highlight">
+                    <div class="small-8 medium-6 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.people_affected_description }}</div>
+                    <div class="small-4 medium-6 columns">{{ project.people_affected }} people</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if project.is_completed %}
+    <div class="content repayment active" id="repayment-{{project.pk}}">
+        <div class="row repayment-stats">
+            <div class="small-12 medium-12 large-3 large-offset-3 columns" style="height:180px">
+                <div class="repayment-progress-container">
+                    <div class="statistics-graphics-container">
+                        <svg class="dashboard-svg-graphics-container"></svg>
+                        <svg class="dashboard-internal-graphics-container"></svg>
+                        <div class="text-container">
+                            <p class="percentage-text">{{ project.percent_repaid }}%</p>
+                            <p class="repaid">REPAID</p>
+                        </div>
+                        <div class="percentage-container hide">{{ project.partial_repayment_as_js }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="repayment-stats-table small-12 medium-8 large-3 medium-offset-2 large-offset-0 columns">
+                <div class="row repayment-stats-table-row">
+                    <div class="description small-6 medium-6 large-7 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.repayment_stats_table_amount_repaid_description }}</div>
+                    <div class="table-value small-6 medium-6 large-5 columns">${{ project.funding_goal|floatformat:"2"|intcomma }}</div>
+                </div>
+                <div class="row repayment-stats-table-row">
+                    <div class="description small-6 medium-6 large-7 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.repayment_stats_table_amount_donated_description }}</div>
+                    <div class="table-value small-6 medium-6 large-5 columns">${{ project.amount_donated|floatformat:"0"|intcomma }}</div>
+                </div>
+                <div class="row repayment-stats-table-row">
+                    <div class="description small-6 medium-6 large-7 columns">{{ settings.revolv_cms.ProjectStatisticsSettings.repayment_stats_table_kwh_saved_description }}</div>
+                    <div class="table-value small-6 medium-6 large-5 columns">${{ project.amount_left|floatformat:"2"|intcomma }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>

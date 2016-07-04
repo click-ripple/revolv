@@ -1,0 +1,529 @@
+from django.db import models
+from wagtail.wagtailadmin.edit_handlers import FieldPanel, StreamFieldPanel
+from wagtail.wagtailcore.fields import RichTextField
+from wagtail.wagtailcore.models import Page
+from wagtail.wagtailcore.fields import StreamField
+from wagtail.wagtailcore import blocks
+from wagtail.wagtailimages.blocks import ImageChooserBlock
+from wagtailsettings import BaseSetting, register_setting
+
+class ImageBlock(blocks.StructBlock):
+    """
+    A block for images whose layout properties and size can be set to one of
+    a small number of useful values.
+    """
+    image = ImageChooserBlock()
+    size = blocks.ChoiceBlock(choices=[
+        ('tiny', 'Tiny'),
+        ('small', 'Small'),
+        ('medium', 'Medium'),
+        ('large', 'Large'),
+        ('full_width', 'Full Width'),
+    ], default='medium', required=True)
+    layout = blocks.ChoiceBlock(choices=[
+        ('img-inline', 'Inline'),
+        ('img-block', 'Block'),
+        ('img-left', 'Float Left'),
+        ('img-right', 'Float Right'),
+        ('img-center', 'Center'),
+    ], default='inline', required=True)
+
+    class Meta:
+        template = 'revolv_cms/blocks/image_block.html'
+
+
+class RichListBlock(blocks.StructBlock):
+    """
+    A list block with rich structure.
+    """
+    list_content = blocks.ListBlock(blocks.StructBlock([
+        # ('centered_row', blocks.BooleanBlock(default=False, required=False)),
+        ('display_type', blocks.ChoiceBlock(choices=[
+            ('li_block', 'Block'),
+            ('li_inline', 'Inline'),
+            ('li_row', 'Row'),
+            ('li_col', 'Column'),
+        ], required=True, default='li_block')),
+        ('main_axis', blocks.ChoiceBlock([
+            ('m_start', 'Start'),
+            ('m_end', 'End'),
+            ('m_center', 'Center'),
+            ('m_space_between', 'Space Between'),
+            ('m_space_around', 'Space Around'),
+        ], required=True, default='m_start')),
+        ('perpendicular_axis', blocks.ChoiceBlock([
+            ('p_start', 'Start'),
+            ('p_end', 'End'),
+            ('p_center', 'Center'),
+            ('p_baseline', 'Baseline'),
+            ('p_stretch', 'Stretch'),
+        ], required=True, default='p_start')),
+        ('content', blocks.StreamBlock([
+            ('rich_text', blocks.RichTextBlock()),
+            ('image', ImageBlock()),
+        ])),
+    ]))
+
+    class Meta:
+        template = 'revolv_cms/blocks/rich_list.html'
+
+
+class RevolvCustomPage(Page):
+    """
+    A CMS page representing a web page that the RE-volv administrators might
+    be able to dynamically update, such as "About Us", "Former Projects",
+    etc.
+
+    How wagtail works is that there exists a hierarchy of pages, and each page
+    inherits from Page like this one does (there's one root page for every site).
+    Pages can have children that are of any subclass of Page, and thus RevolvCustomPages
+    can be at any level in the menu hierarchy which we need for both the header
+    and footer menus.
+    """
+    body = StreamField([
+        ('rich_text', blocks.RichTextBlock()),
+        ('image', ImageBlock()),
+        ('rich_list', RichListBlock()),
+    ])
+    search_name = "Custom Page"
+
+    indexed_fields = ('body', )
+    content_panels = [
+        FieldPanel('title', classname="full title"),
+        StreamFieldPanel('body'),
+    ]
+
+
+class RevolvLinkPage(Page):
+    """
+    A page that represents a link to another page. Since it is technically
+    a "Page", it can go into menus and have children, but it does not have
+    content. A RevolvLinkPage exists for menu headers which serve as only
+    links to other pages, not pages themselves, and menu items that serve as
+    outside links or links to pages that are not part of the CMS, like sign in
+    or auth.
+    """
+    link_href = models.CharField(max_length=1024)
+    content_panels = [
+        FieldPanel('title', classname="full title"),
+        FieldPanel('link_href', classname="full")
+    ]
+
+
+@register_setting
+class MainPageSettings(BaseSetting):
+    """
+    Editable settings for the homepage.
+
+    See https://wagtailsettings.readthedocs.org/en/latest/settings.html
+    """
+    site_tagline = models.CharField(
+        max_length=100,
+        help_text="The tagline for the site, which will be shown large and centered over the animated cover video.",
+        default="STOP IMAGINING<i></i> A CLEAN ENERGY FUTURE. START CREATING IT."
+    )
+    site_subheading = models.TextField(
+        help_text="The description text that will be shown after the site tagline - a brief (one sentence) introduction to what RE-volv is and how donors can help.",
+        default="When you donate to RE-volv's solar projects, you are making a lasting impact on the environment and the world around you."
+    )
+    learn_button_text = models.CharField(
+        max_length=50,
+        help_text="The label on the 'Learn more button'. E.g. 'Learn about how RE-volv works'",
+        default="DONATE"
+    )
+    single_project_heading = models.CharField(
+        max_length=50,
+        help_text="The heading to display above the featured project on the homepage when there is only one featured project, e.g. 'Our current project'",
+        default="OUR CURRENT PROJECT"
+    )
+    multiple_projects_heading = models.CharField(
+        max_length=50,
+        help_text="The heading to display above the featured project on the homepage when there are multiple featured projects, e.g. 'Our current projects'",
+        default="OUR CURRENT PROJECTS"
+    )
+    how_it_works_heading = models.CharField(
+        max_length=50,
+        help_text="The heading to display above the 'Learn about how RE-volv works' section on the homepage, e.g. 'Learn about how RE-volv works'",
+        default="How it works"
+    )
+    how_it_works_intro = models.TextField(
+        help_text="Intro paragraph for the 'Learn about how RE-volv works' section of the homepage.",
+        default=(
+            "We believe that everyone should have the ability to support clean energy. So we "
+            "created a new way for people to take action. It's a pretty simple idea. We raise "
+            "money through crowdfunding to put solar panels on community-serving "
+            "nonprofit organizations and worker-owned cooperatives. As these organizations "
+            "pay us back, we reinvest the money into more solar projects in communities "
+            "across the country. This creates a revolving fund for solar energy that continually "
+            "perpetuates itself building more and more solar. It's a pay-it-forward model for "
+            "community solar. We call it the Solar Seed Fund."
+       )
+    )
+    how_it_works_video_url = models.URLField(help_text="URL for 'how it works' video", default="https://www.youtube.com/embed/eSADOAxjcPU")
+    how_it_works_tagline = models.CharField(
+        max_length=200,
+        help_text="Large heading directly before the infograph portion of the homepage. e.g. 'How would your donation help?'",
+        default="How would your donation to RE-volv help?"
+    )
+    how_it_works_pitch = models.CharField(
+        max_length=200,
+        help_text="Large text directly before the call to action donation button at the bottom of the hompage, e.g. 'Be part of something great.'",
+        default="Be a part of something great."
+    )
+    call_to_action_button_text = models.CharField(
+        max_length=50,
+        help_text="The label on the green call to action button at the bottom of the homepage.",
+        default="Start contributing"
+    )
+
+
+@register_setting
+class FooterSettings(BaseSetting):
+    """Editable settings for the RE-volv footer."""
+    contact_heading = models.CharField(
+        max_length=50,
+        help_text="The heading to display in the footer menu above the contact information. Probably just 'Contact'",
+        default="Contact"
+    )
+    contact_email = models.EmailField(
+        max_length=200,
+        help_text="The email address to display in the contact info section of the footer menu.",
+        default="info@re-volv.org"
+    )
+    contact_phone_number = models.CharField(
+        max_length=30,
+        help_text="The phone number to display in the contact info section of the footer menu. e.g. 415.314.7719",
+        default="415.314.7719"
+    )
+    contact_address_line_1 = models.CharField(
+        max_length=150,
+        help_text="The first line of the address to display in the contact info section of the footer menu.",
+        default="972 Mission St. Suite 500"
+    )
+    contact_address_line_2 = models.CharField(
+        blank=True,
+        max_length=150,
+        help_text="The second line of the address to display in the contact info section of the footer menu.",
+        default="San Francisco, CA 94103"
+    )
+
+
+@register_setting
+class LoginPageSettings(BaseSetting):
+    """Editable settings for the RE-volv login page."""
+    heading = models.CharField(
+        max_length=50,
+        help_text="The heading text of the login page. e.g. 'Welcome back!'",
+        default="Welcome back!"
+    )
+    heading_for_donation = models.CharField(
+        max_length=30,
+        help_text="The heading text of the login page when specifically directed there as a consequence of clicking a donate button when not logged in. e.g. 'Please log in to donate'",
+        default="Login to donate"
+    )
+    login_paragraph = RichTextField(
+        blank=True,
+        help_text="The paragraph of text to be shown under the heading on the login page, but before the links to the register page and the forgot password page.",
+        default="<p>Log in to see the impact you've had on communities that use renewable solar energy.</p>"
+    )
+    login_paragraph_for_donation = RichTextField(
+        blank=True,
+        help_text="The paragraph of text to be shown under the heading on the login page, but specifically when the user is directed to the login page as a result of clicking a donate button when not logged in.",
+        default=""
+    )
+    button_text = models.CharField(
+        max_length=30,
+        help_text="The text on the actual login button, e.g. 'Log in'",
+        default="Log in"
+    )
+
+    content_panels = [
+        FieldPanel('login_paragraph', classname="full"),
+        FieldPanel('login_paragraph_for_donation', classname="full"),
+    ]
+
+
+@register_setting
+class SignupPageSettings(BaseSetting):
+    """Editable settings for the RE-volv signup (user regisration) page."""
+    heading = models.CharField(
+        max_length=50,
+        help_text="The heading text of the sign up page. e.g. 'Welcome!'",
+        default="Welcome!"
+    )
+    signup_paragraph = RichTextField(
+        blank=True,
+        help_text="The paragraph of text to be shown under the heading on the sign up page, but before the link to the login page.",
+        default="<p>Start investing in renewable solar energy by signing up for an account.</p>"
+    )
+    tos_paragraph = RichTextField(
+        blank=True,
+        help_text="The paragraph to display directly after the form but before the sign up button. Should include a link to the Terms of Service page.",
+        default="<p>Signing up for an account means joining the RE-volv community and agreeing to the <a href='/tos/'>terms of service</a>. RE-volv will never store credit card information and will never give your information to third parties. Welcome!</p>"
+    )
+    button_text = models.CharField(
+        max_length=30,
+        help_text="The text on the actual sign up button, e.g. 'Sign up'",
+        default="Sign Up"
+    )
+
+    content_panels = [
+        FieldPanel('signup_paragraph', classname="full"),
+    ]
+
+
+@register_setting
+class ProjectPageSettings(BaseSetting):
+    """Editable settings for the RE-volv project page."""
+    donors_wording = models.CharField(
+        max_length=20,
+        help_text="The wording that will be displayed after the number of donors to the project the user is viewing. For example, 'donors' or 'contributors'.",
+        default="donors"
+    )
+
+
+@register_setting
+class PaymentModalSettings(BaseSetting):
+    """Editable settings for the payment modal on the project page."""
+    payment_modal_paragraph = RichTextField(
+        blank=True,
+        help_text="Optional: a paragraph which will appear above the credit card entry areas of the donation modal on the project page. Use this as another opportunity to assure the user of the security of the payments.",
+        default=""
+    )
+    confirm_payment_paragraph = RichTextField(
+        blank=True,
+        help_text="Optional: a paragraph which will appear above the submit button of the donation confirmation modal on the project page. Use this as another opportunity to assure the user of the security of the payments.",
+        default=""
+    )
+
+    content_panels = [
+        FieldPanel('payment_modal_paragraph', classname="full"),
+    ]
+
+
+@register_setting
+class DashboardImpactSettings(BaseSetting):
+    """Editable settings for the 'My Impact' section of the dashboard page."""
+    impact_statistics_header_text = models.CharField(
+        max_length=90,
+        help_text="The heading above the statistics in the 'My Impact' section of the dashboard, e.g. 'Thank you for contributing! Your contribution has...'.",
+        default='Thank you for contributing! Your contribution has...'
+    )
+
+    description_section_explanation = ' There are three sections to every statistic description. The top section is the first line, the middle section is the actual statistic (which is calculated and not editable) and is shown bold and in color, and the bottom section is the last line.'
+
+    repayment_statistic_top_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The top section of the description of the repayments statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='earned'
+    )
+
+    repayment_statistic_bottom_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The bottom section of the description of the repayments statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='to reinvest'
+    )
+
+    project_count_statistic_top_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The top section of the description of the project count statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='contributed to'
+    )
+
+    project_count_statistic_bottom_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The bottom section of the description of the project count statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default=''
+    )
+
+    carbon_dioxide_statistic_top_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The top section of the description of the carbon dioxide statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='saved'
+    )
+
+    carbon_dioxide_statistic_bottom_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The bottom section of the description of the carbon dioxide statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='of carbon dioxide'
+    )
+
+    last_statistic_description_text = models.CharField(
+        blank=True,
+        max_length=100,
+        help_text="The description of the bottom right icon on the 'My Impact' section of the dashboard. Unlike the other statistics on this page, this last section only has one text field.",
+        default='Help us save the world by going solar!'
+    )
+
+    trees_saved_statistic_top_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The top section of the description of the trees saved statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='saved'
+    )
+
+    trees_saved_statistic_bottom_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The bottom section of the description of the trees saved statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='of trees'
+    )
+
+    kwh_statistic_top_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The top section of the description of the kilowatt-hours statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='generated'
+    )
+
+    kwh_statistic_bottom_description_text = models.CharField(
+        blank=True,
+        max_length=20,
+        help_text="The bottom section of the description of the kilowatt-hours saved statistic on the 'My Impact' section of the dashboard." + description_section_explanation,
+        default='of electricity'
+    )
+
+
+@register_setting
+class DashboardSettings(BaseSetting):
+    """Editable settings for the dashboard page."""
+
+    category_preferences_header_text = models.CharField(
+        max_length=100,
+        help_text="The heading of category preferences section in the 'My Impact' section of the dashboard.",
+        default='What type of projects should we invest your repayments in next?'
+    )
+
+    category_preferences_explanation_header_text = models.CharField(
+        max_length=50,
+        help_text="The header of the category preference explanation in the 'My Impact' section of the dashboard.",
+        default="What's going on?"
+    )
+
+    category_preferences_explanation_paragraph = RichTextField(
+        help_text="A paragraph which will appear below the category preference options on the 'My Impact' section on the dashboard to explain to the user what category preferences mean.",
+        default="<p>Your donation to RE-volv has been invested in a revolving fund. Money from the fund is used to place solar equipment on community buildings. Over time, the community pays RE-volv back. These repayments are invested in even more solar projects. A fraction of the repayments from a solar investment originates from your investment. Your preferences directly affect where that chunk of money is invested.</p>"
+    )
+
+
+@register_setting
+class ProjectStatisticsSettings(BaseSetting):
+    """Editable settings for statistics about projects (see revolv.project.stats)"""
+    kilowatt_description = models.CharField(
+        max_length=50,
+        help_text="A description of the concept of kilowatts of power that a project generates, to be displayed as a statistic on the dashboard or project pages. e.g. 'Kilowatt power output'",
+        default="Kilowatt power output"
+    )
+    dollars_saved_description = models.CharField(
+        max_length=50,
+        help_text="A description of the dollars that a project will save in elctricity costs per month, to be displayed as a statistic on the dashboard or project pages. e.g. 'Dollars saved per month'",
+        default="Dollars saved per month"
+    )
+    carbon_saved_description = models.CharField(
+        max_length=50,
+        help_text="A description of the pounds of carbon that will be saved by a project per month, to be displayed as a statistic on the dashboard or project pages. e.g. 'Carbon emissions saved per month'",
+        default="Carbon emissions saved per month"
+    )
+    trees_description = models.CharField(
+        max_length=50,
+        help_text="A description of the acres of trees which, if planted, would provide equivalent savings to a project, to be displayed as a statistic on the dashboard or project pages. e.g. 'Equivalent carbon savings in trees'",
+        default="Equivalent carbon savings of trees"
+    )
+    automobile_miles_description = models.CharField(
+        max_length=50,
+        help_text="A description of the equivalent automobile miles which, if driven, would produce the same amount of carbon that a project will save per month, to be displayed as a statistic on the dashboard or project pages. e.g. 'Equivalent carbon in automobile miles'",
+        default="Equivalent carbon in automobile miles"
+    )
+    donor_stats_table_funding_goal_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the funding goal statistic in the dashboard project statistics area.",
+        default="Funding Goal"
+    )
+    donor_stats_table_amount_donated_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the amount donated statistic in the dashboard project statistics area.",
+        default="Amount Donated"
+    )
+    donor_stats_table_amount_remaining_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the amount remaining statistic in the dashboard project statistics area.",
+        default="Amount Remaining"
+    )
+    donor_stats_table_donors_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the number of donors statistic in the dashboard project statistics area. e.g. 'Donors' or 'Total Donors'",
+        default="Donors"
+    )
+    donor_stats_table_timeline_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the project timeline (total number of days for the campaign) statistic in the dashboard project statistics area. e.g. 'Timeline'",
+        default="Timeline"
+    )
+    donor_stats_table_days_so_far_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the 'days so far' statistic in the dashboard project statistics area. e.g. 'Days so far' or 'Days since start'",
+        default="Days so far"
+    )
+    repayment_stats_table_amount_repaid_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the amount repaid statistic in the dashboard project repayment statistics area.",
+        default="Amount Repaid"
+    )
+    repayment_stats_table_amount_donated_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the amount donated statistic in the dashboard project repayment statistics area.",
+        default="Amount Donated"
+    )
+    repayment_stats_table_kwh_saved_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the kwh saved statistic in the dashboard project repayment statistics area.",
+        default="Amount Remaining"
+    )
+    people_affected_description = models.CharField(
+        max_length=30,
+        help_text="The description to be displayed next to the 'people affected' statistic in the dashboard project statistics area. e.g. 'Number of people affected' or 'People affected'",
+        default="Number of people affected"
+    )
+
+@register_setting
+class ActiveProjectsPageSettings(BaseSetting):
+    """
+    Editable settings for the Projects List Page.
+
+    See https://wagtailsettings.readthedocs.org/en/latest/settings.html
+    """
+    join_the_movement = models.CharField(
+        max_length=200,
+        help_text="Large text directly before the call to action donation button at the bottom of the projects page, e.g. 'Join the movement.'",
+        default="Join the movement."
+    )
+
+    start_funding_button_text = models.CharField(
+        max_length=50,
+        help_text="The label on the green call to action button at the bottom of the homepage.",
+        default="Create a new project"
+    )
+    single_project_heading = models.CharField(
+        max_length=50,
+        help_text="The heading to display above the featured project on the projects list page when there is only one active project, e.g. 'Our current project'",
+        default="OUR CURRENT PROJECT"
+    )
+    multiple_projects_heading = models.CharField(
+        max_length=50,
+        help_text="The heading to display above the featured project on the projects list when there are multiple active projects, e.g. 'Our current projects'",
+        default="OUR CURRENT PROJECTS"
+    )
+
+@register_setting
+class ShareThisSettings(BaseSetting):
+    """
+    ShareThis default Settings
+    """
+    image = models.URLField(verbose_name='Image Url', help_text='The Url of image that will be used in ShareThis widget')
+    description = models.CharField(max_length=200, help_text="The description that will be used in ShareThis widget")

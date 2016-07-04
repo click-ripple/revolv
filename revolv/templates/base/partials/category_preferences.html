@@ -1,0 +1,18 @@
+{% load staticfiles %}
+{% load revolv_cms_tags %}
+
+<div class="large-1 columns gray-bar-container">
+    <div class="gray-bar"></div>
+</div>
+<div class="large-11 columns choice-container">
+    <div class="choice-header">{{ settings.revolv_cms.DashboardSettings.category_preferences_header_text }}</div>
+    {% for category in categories %}
+        <div class="category-option-container {% if category in preferred_categories %}active{% endif %}" data-category-id="{{ category.id }}">
+            <img class="checkmark" src="{% static "images/checkmark.png" %}"/>
+            <p class="category-title">{{ category.title }}</p>
+        </div>
+    {% endfor %}
+
+    <div class="explanation-header">{{ settings.revolv_cms.DashboardSettings.category_preferences_explanation_header_text }}</div>
+    <div class="explanation">{{ settings.revolv_cms.DashboardSettings.category_preferences_explanation_paragraph|safe }}</div>
+</div>

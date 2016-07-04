@@ -1,0 +1,196 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static "typeahead/typeahead.css" %}" />
+<link rel="stylesheet" href="{% static "chosen/chosen.css" %}" />
+<link rel="stylesheet" href="{% static 'dist/css/pages/project-edit/index.css' %}" />
+<link href='//fonts.googleapis.com/css?family=Lato:300,500,800' rel='stylesheet' type='text/css'>
+<style type="text/css">
+    #map-canvas { width: 100%; height: 300px; margin-bottom: 20px; padding: 0;}
+    #map-canvas img {max-width: none;}
+</style>
+
+{% endblock %}
+
+{% block title %}{% if project.id %}Edit{% else %}Create{% endif %} Project | {% endblock %}
+
+{% block nav %}
+  {% include "base/partials/project-nav.html" %}
+{% endblock %}
+
+{% block body %}
+<div class="contents after-header edit-project">
+  <div class="container">
+    <div class="row form-section">
+        <div class="large-12 columns">
+            <form method="POST" enctype="multipart/form-data" id="project_form">
+                  {% csrf_token %}
+                  {{ form.media }}
+                  {% for error in form.non_field_errors %}
+                <div data-alert class="alert-box alert">
+                    {{ error }}
+                    <a href="#" class="close">&times;</a>
+                  </div>
+                {% endfor %}
+
+                <div class="row project-overview section">
+                    <p class="section-title">Project Overview</p>
+                    <div class="medium-6 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.title %}
+                        {% include "base/partials/tooltip_formfield.html" with field=form.tagline %}
+                        <span>Categories</span>
+                        {{ form.categories_select|add_class:"chosen-select" }}
+                        {% for error in form.categories_select.errors %}
+                            <small class="error">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+
+                    <div class="medium-6 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.funding_goal %}
+                        {% include "base/partials/tooltip_formfield.html" with field=form.impact_power %}
+                        {% include "base/partials/tooltip_formfield.html" with field=form.end_date %}
+                    </div>
+
+                    <div class="medium-12 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.video_url %}
+                        {% include "base/partials/tooltip_formfield.html" with field=form.cover_photo %}
+                        {% include "base/partials/tooltip_formfield.html" with field=form.description %}
+                    </div>
+                </div>
+
+                <div class="row donation-levels section">
+                    <p class="section-title donation-level-container">Donation Levels</p>
+                    {{ donation_level_formset.management_form }}
+                    <script type="text/javascript">
+                        window.DONATION_LEVEL_COUNT = {{ donation_level_formset|length }};
+                        window.EXTRA = 1;
+                    </script>
+                    {% for donation_level_form in donation_level_formset %}
+                        <div class="donation-level-box donation-level-{{ forloop.counter0 }}">
+                            <div class="small-4 columns">
+                                {% include "base/partials/tooltip_formfield.html" with field=donation_level_form.amount %}
+                                {% include "base/partials/tooltip_formfield.html" with field=donation_level_form.DELETE %}
+                            </div>
+                            <div class="small-8 columns">
+                                {% include "base/partials/tooltip_formfield.html" with field=donation_level_form.description %}
+                            </div>
+                            {% for hidden in donation_level_form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- THIS DOES NOT EXIST -->
+                <!-- <div class="row add-button">Add a new donation level</div> -->
+
+                <div class="row organization-overview section">
+                    <p class="section-title">Organization Overview</p>
+                    <div class="medium-12 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.org_name %}
+                    </div>
+                    <div class="medium-6 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.org_start_date %}
+                    </div>
+                    <div class="medium-6 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.people_affected %}                </div>
+                    <div class="medium-12 small-12 columns">
+                        {% include "base/partials/tooltip_formfield.html" with field=form.location %}
+                        <div id="map-canvas"></div>
+                        {% include "base/partials/tooltip_formfield.html" with field=form.org_about %}
+                    </div>
+                </div>
+                <div class="hide">
+                    {% include "base/partials/tooltip_formfield.html" with field=form.location_latitude %}
+                    {% include "base/partials/tooltip_formfield.html" with field=form.location_longitude %}
+                    {% include "base/partials/tooltip_formfield.html" with field=form.extra %}
+                </div>
+                <button class="large right save-button" id="save_project" type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+<!-- Initializes the Google Map / Location Selection Typeahead -->
+<script type="text/javascript"
+    src="//maps.googleapis.com/maps/api/js?key={{GOOGLEMAPS_API_KEY}}&libraries=places">
+</script>
+<script src="{% static 'typeahead/typeahead.bundle.js' %}"></script>
+<script src="{% static 'typeahead/typeahead-addresspicker.js' %}"></script>
+<script type="text/javascript">
+    // gets the start location of the map
+    {% if project.location_latitude %}
+        var latitude = {{project.location_latitude}};
+    {% else %}
+        var latitude = 37.7699298;
+    {% endif %}
+
+    {% if project.location_longitude %}
+        var longitude = {{project.location_longitude}};
+    {% else %}
+        var longitude = -122.4469157;
+    {% endif %}
+    var startLocation = new google.maps.LatLng(latitude, longitude);
+    // instantiate the addressPicker suggestion engine (based on bloodhound)
+    // https://github.com/sgruhier/typeahead-addresspicker
+    var addressPicker = new AddressPicker({
+        map: {
+            center: startLocation,
+            id: '#map-canvas',
+            displayMarker: true,
+            zoom: 18
+        },
+        marker: {
+            position: startLocation,
+            visible: true,
+            draggable: false
+        },
+        zoomForLocation: 18,
+        draggable: false,
+        reverseGeocoding: true,
+        utocompleteService: {
+            componentRestrictions: {
+                country: 'US'
+            }
+        }
+    });
+    // instantiate the typeahead UI
+    $('#id_location').typeahead(null, {
+        displayKey: 'description',
+        source: addressPicker.ttAdapter()
+    });
+    // add click listeners
+    addressPicker.bindDefaultTypeaheadEvent($('#id_location'))
+    $(addressPicker).on('addresspicker:selected', function (event, result) {
+        $('#id_location_latitude').val(result.lat());
+        $('#id_location_longitude').val(result.lng());
+    });
+
+    $("#project_form").on('submit', function(e) {
+        if (!$('#id_location_latitude').val() || !$('#id_location_longitude').val()) {
+            toastr.options.positionClass = "toast-bottom-right";
+            toastr.error("Please enter a valid address");
+            e.preventDefault();
+            return false;
+        }
+    });
+</script>
+<!-- Initializes the category selection tool -->
+<script src="{% static 'chosen/chosen.jquery.js' %}"></script>
+<script type="text/javascript">
+    $("#id_extra").val(1);
+
+    $('<div class="project-edit-spacer"></div>').insertBefore("#cover_photo-clear_id");
+    // window.PROJECT_ID = {{ project.id }};
+</script>
+<script type="text/javascript">
+    $(".chosen-select").chosen();
+</script>
+
+{% endblock %}
